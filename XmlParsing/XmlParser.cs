@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using DomainModels;
+using XmlParsing.Models;
 
 namespace XmlParsing
 {
@@ -19,7 +20,17 @@ namespace XmlParsing
         public IEnumerable<Programmer> Parse()
         {
             var parsedProgrammers = network.Programmers;
-            return parsedProgrammers.Select(parsedProgrammer => new Programmer(parsedProgrammer.Name));
+            return parsedProgrammers.Select(CreateProgrammer);
+        }
+
+        private static Programmer CreateProgrammer(ParsedProgrammer parsedProgrammer)
+        {
+            var programmer = new Programmer(parsedProgrammer.Name);
+            foreach (var parsedRecommendation in parsedProgrammer.Recommendations.Recommendations)
+            {
+                programmer.Recommendations.Add(new Programmer(parsedRecommendation));
+            }
+            return programmer;
         }
     }
 }
